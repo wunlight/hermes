@@ -5,6 +5,8 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/wunlight/hermes/internal/bootstrap"
 )
 
 func New() *chi.Mux {
@@ -14,13 +16,13 @@ func New() *chi.Mux {
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Recoverer)
 
-	mount(r)
-
 	return r
 }
 
-func mount(r chi.Router) {
+func Register(r chi.Router, db *pgxpool.Pool) {
 	r.Get("/health", health)
+
+	bootstrap.Permission(r, db)
 }
 
 func health(w http.ResponseWriter, r *http.Request) {

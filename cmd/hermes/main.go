@@ -40,6 +40,8 @@ func run() error {
 	defer dbPool.Close()
 
 	r := router.New()
+	router.Register(r, dbPool)
+
 	srv := server.New(cfg.HTTP, r)
 	serverErr := make(chan error, 1)
 
@@ -51,7 +53,6 @@ func run() error {
 
 		if err := srv.ListenAndServe(); err != nil &&
 			!errors.Is(err, http.ErrServerClosed) {
-
 			serverErr <- err
 		}
 		close(serverErr)
