@@ -24,6 +24,14 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	permission, err := h.service.Create(r.Context(), req)
 	if err != nil {
+		if errors.Is(err, ErrPermissionCodeRequired) {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		if errors.Is(err, ErrInvalidPermissionCode) {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
 		if errors.Is(err, ErrPermissionAlreadyExists) {
 			http.Error(w, err.Error(), http.StatusConflict)
 			return

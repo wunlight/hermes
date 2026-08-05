@@ -3,6 +3,7 @@ package permission
 import (
 	"context"
 	"fmt"
+	"strings"
 )
 
 type Service struct {
@@ -14,6 +15,16 @@ func NewService(repository Repository) *Service {
 }
 
 func (s *Service) Create(ctx context.Context, req CreateRequest) (*Permission, error) {
+	req.Code = strings.TrimSpace(req.Code)
+	if req.Code == "" {
+		return nil, ErrPermissionCodeRequired
+	}
+
+	req.Code = strings.ToLower(req.Code)
+	if !isValidPermissionCode(req.Code) {
+		return nil, ErrInvalidPermissionCode
+	}
+
 	existing, err := s.repository.GetByCode(ctx, req.Code)
 	if err != nil {
 		return nil, fmt.Errorf("get permission by code: %w", err)
