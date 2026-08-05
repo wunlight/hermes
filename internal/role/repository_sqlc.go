@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/jackc/pgx/v5/pgtype"
-	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/wunlight/hermes/internal/adapters/sqlc"
 )
 
@@ -13,8 +12,8 @@ type sqlcRepository struct {
 	queries *sqlc.Queries
 }
 
-func NewRepository(pool *pgxpool.Pool) Repository {
-	return &sqlcRepository{queries: sqlc.New(pool)}
+func NewRepository(db sqlc.DBTX) Repository {
+	return &sqlcRepository{queries: sqlc.New(db)}
 }
 
 func (r *sqlcRepository) Create(ctx context.Context, req CreateRequest) (*Role, error) {

@@ -8,7 +8,11 @@ import (
 	"github.com/wunlight/hermes/internal/config"
 )
 
-func New(ctx context.Context, cfg config.DatabaseConfig) (*pgxpool.Pool, error) {
+type DB struct {
+	pool *pgxpool.Pool
+}
+
+func New(ctx context.Context, cfg config.DatabaseConfig) (*DB, error) {
 	dsn := fmt.Sprintf(
 		"host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
 		cfg.Host,
@@ -34,5 +38,13 @@ func New(ctx context.Context, cfg config.DatabaseConfig) (*pgxpool.Pool, error) 
 		return nil, fmt.Errorf("ping database: %w", err)
 	}
 
-	return pool, nil
+	return &DB{pool: pool}, nil
+}
+
+func (db *DB) Executor() *pgxpool.Pool {
+	return db.pool
+}
+
+func (db *DB) Close() {
+	db.pool.Close()
 }

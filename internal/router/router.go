@@ -5,8 +5,8 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/wunlight/hermes/internal/bootstrap"
+	"github.com/wunlight/hermes/internal/database"
 )
 
 func New() *chi.Mux {
@@ -19,11 +19,13 @@ func New() *chi.Mux {
 	return r
 }
 
-func Register(r chi.Router, db *pgxpool.Pool) {
+func Register(r chi.Router, db *database.DB) {
+	executor := db.Executor()
+
 	r.Get("/health", health)
 
-	bootstrap.Permission(r, db)
-	bootstrap.Role(r, db)
+	bootstrap.Permission(r, executor)
+	bootstrap.Role(r, executor)
 }
 
 func health(w http.ResponseWriter, r *http.Request) {

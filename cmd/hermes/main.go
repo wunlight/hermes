@@ -33,14 +33,14 @@ func run() error {
 		return fmt.Errorf("load config: %w", err)
 	}
 
-	dbPool, err := database.New(ctx, cfg.DB)
+	db, err := database.New(ctx, cfg.DB)
 	if err != nil {
 		return fmt.Errorf("load database: %w", err)
 	}
-	defer dbPool.Close()
+	defer db.Close()
 
 	r := router.New()
-	router.Register(r, dbPool)
+	router.Register(r, db)
 
 	srv := server.New(cfg.HTTP, r)
 	serverErr := make(chan error, 1)
