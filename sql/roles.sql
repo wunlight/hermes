@@ -17,6 +17,17 @@ RETURNING
     created_at,
     updated_at;
 
+-- name: GetRoleByCode :one
+SELECT
+    id,
+    code,
+    name,
+    description,
+    created_at,
+    updated_at
+FROM roles
+WHERE code = $1;
+
 -- name: CreateRolePermission :exec
 INSERT INTO role_permissions (
     role_id,

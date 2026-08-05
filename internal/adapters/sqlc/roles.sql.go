@@ -72,3 +72,29 @@ func (q *Queries) CreateRolePermission(ctx context.Context, arg CreateRolePermis
 	_, err := q.db.Exec(ctx, createRolePermission, arg.RoleID, arg.PermissionID)
 	return err
 }
+
+const getRoleByCode = `-- name: GetRoleByCode :one
+SELECT
+    id,
+    code,
+    name,
+    description,
+    created_at,
+    updated_at
+FROM roles
+WHERE code = $1
+`
+
+func (q *Queries) GetRoleByCode(ctx context.Context, code string) (Role, error) {
+	row := q.db.QueryRow(ctx, getRoleByCode, code)
+	var i Role
+	err := row.Scan(
+		&i.ID,
+		&i.Code,
+		&i.Name,
+		&i.Description,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}

@@ -2,8 +2,11 @@ package role
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
+	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/wunlight/hermes/internal/adapters/sqlc"
 )
@@ -33,6 +36,31 @@ func (r *sqlcRepository) Create(ctx context.Context, req CreateRequest) (*Role, 
 	}
 
 	return toDomain(row), nil
+}
+
+func (r *sqlcRepository) GetByCode(ctx context.Context, code string) (*Role, error) {
+	row, err := r.queries.GetRoleByCode(
+		ctx,
+		code,
+	)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("get permission by code: %w", err)
+	}
+
+	return toDomain(row), nil
+}
+
+func (r *sqlcRepository) CreateRolePermission(ctx context.Context, roleID uuid.UUID, permissionID uuid.UUID) error {
+	return r.queries.CreateRolePermission(
+		ctx,
+		sqlc.CreateRolePermissionParams{
+			RoleID:       roleID,
+			PermissionID: permissionID,
+		},
+	)
 }
 
 func toDomain(p sqlc.Role) *Role {
