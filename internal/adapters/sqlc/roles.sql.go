@@ -8,6 +8,7 @@ package sqlc
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -49,4 +50,25 @@ func (q *Queries) CreateRole(ctx context.Context, arg CreateRoleParams) (Role, e
 		&i.UpdatedAt,
 	)
 	return i, err
+}
+
+const createRolePermission = `-- name: CreateRolePermission :exec
+INSERT INTO role_permissions (
+    role_id,
+    permission_id
+)
+VALUES (
+    $1,
+    $2
+)
+`
+
+type CreateRolePermissionParams struct {
+	RoleID       uuid.UUID
+	PermissionID uuid.UUID
+}
+
+func (q *Queries) CreateRolePermission(ctx context.Context, arg CreateRolePermissionParams) error {
+	_, err := q.db.Exec(ctx, createRolePermission, arg.RoleID, arg.PermissionID)
+	return err
 }

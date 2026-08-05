@@ -52,6 +52,28 @@ func (r *sqlcRepository) GetByCode(ctx context.Context, code string) (*Permissio
 	return toDomain(row), nil
 }
 
+func (r *sqlcRepository) GetByCodes(ctx context.Context, codes []string) ([]Permission, error) {
+	rows, err := r.queries.GetPermissionByCodes(
+		ctx,
+		codes,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("get permission by codes: %w", err)
+	}
+
+	return toDomains(rows), nil
+}
+
+func toDomains(rows []sqlc.Permission) []Permission {
+	permissions := make([]Permission, 0, len(rows))
+
+	for _, row := range rows {
+		permissions = append(permissions, *toDomain(row))
+	}
+
+	return permissions
+}
+
 func toDomain(p sqlc.Permission) *Permission {
 	return &Permission{
 		ID:          p.ID,

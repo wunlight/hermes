@@ -16,9 +16,10 @@ type Role struct {
 }
 
 type CreateRequest struct {
-	Code        string `json:"code"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
+	Code            string   `json:"code"`
+	Name            string   `json:"name"`
+	Description     string   `json:"description"`
+	PermissionCodes []string `json:"permission_codes"`
 }
 
 type Response struct {

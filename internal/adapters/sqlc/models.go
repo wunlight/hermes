@@ -25,3 +25,8 @@ type Role struct {
 	CreatedAt   pgtype.Timestamptz
 	UpdatedAt   pgtype.Timestamptz
 }
+
+type RolePermission struct {
+	RoleID       uuid.UUID
+	PermissionID uuid.UUID
+}

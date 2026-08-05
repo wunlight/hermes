@@ -69,3 +69,40 @@ func (q *Queries) GetPermissionByCode(ctx context.Context, code string) (Permiss
 	)
 	return i, err
 }
+
+const getPermissionByCodes = `-- name: GetPermissionByCodes :many
+SELECT
+    id,
+    code,
+    description,
+    created_at,
+    updated_at
+FROM permissions
+WHERE code = ANY($1::text[])
+`
+
+func (q *Queries) GetPermissionByCodes(ctx context.Context, codes []string) ([]Permission, error) {
+	rows, err := q.db.Query(ctx, getPermissionByCodes, codes)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Permission
+	for rows.Next() {
+		var i Permission
+		if err := rows.Scan(
+			&i.ID,
+			&i.Code,
+			&i.Description,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
