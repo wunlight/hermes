@@ -16,9 +16,7 @@ type sqlcRepository struct {
 }
 
 func NewRepository(pool *pgxpool.Pool) Repository {
-	return &sqlcRepository{
-		queries: sqlc.New(pool),
-	}
+	return &sqlcRepository{queries: sqlc.New(pool)}
 }
 
 func (r *sqlcRepository) Create(ctx context.Context, req CreateRequest) (*Permission, error) {

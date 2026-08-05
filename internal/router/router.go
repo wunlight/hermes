@@ -23,6 +23,7 @@ func Register(r chi.Router, db *pgxpool.Pool) {
 	r.Get("/health", health)
 
 	bootstrap.Permission(r, db)
+	bootstrap.Role(r, db)
 }
 
 func health(w http.ResponseWriter, r *http.Request) {
