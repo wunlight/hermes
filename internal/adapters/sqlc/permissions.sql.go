@@ -20,7 +20,12 @@ VALUES (
     $1,
     $2
 )
-RETURNING id, code, description, created_at, updated_at
+RETURNING
+    id,
+    code,
+    description,
+    created_at,
+    updated_at
 `
 
 type CreatePermissionParams struct {
@@ -30,6 +35,30 @@ type CreatePermissionParams struct {
 
 func (q *Queries) CreatePermission(ctx context.Context, arg CreatePermissionParams) (Permission, error) {
 	row := q.db.QueryRow(ctx, createPermission, arg.Code, arg.Description)
+	var i Permission
+	err := row.Scan(
+		&i.ID,
+		&i.Code,
+		&i.Description,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const getPermissionByCode = `-- name: GetPermissionByCode :one
+SELECT
+    id,
+    code,
+    description,
+    created_at,
+    updated_at
+FROM permissions
+WHERE code = $1
+`
+
+func (q *Queries) GetPermissionByCode(ctx context.Context, code string) (Permission, error) {
+	row := q.db.QueryRow(ctx, getPermissionByCode, code)
 	var i Permission
 	err := row.Scan(
 		&i.ID,

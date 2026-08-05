@@ -14,6 +14,15 @@ func NewService(repository Repository) *Service {
 }
 
 func (s *Service) Create(ctx context.Context, req CreateRequest) (*Permission, error) {
+	existing, err := s.repository.GetByCode(ctx, req.Code)
+	if err != nil {
+		return nil, fmt.Errorf("get permission by code: %w", err)
+	}
+
+	if existing != nil {
+		return nil, ErrPermissionAlreadyExists
+	}
+
 	permission, err := s.repository.Create(ctx, req)
 	if err != nil {
 		return nil, fmt.Errorf("create permission: %w", err)

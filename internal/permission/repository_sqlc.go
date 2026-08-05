@@ -2,8 +2,10 @@ package permission
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/wunlight/hermes/internal/adapters/sqlc"
@@ -32,6 +34,21 @@ func (r *sqlcRepository) Create(ctx context.Context, req CreateRequest) (*Permis
 	)
 	if err != nil {
 		return nil, fmt.Errorf("create permission: %w", err)
+	}
+
+	return toDomain(row), nil
+}
+
+func (r *sqlcRepository) GetByCode(ctx context.Context, code string) (*Permission, error) {
+	row, err := r.queries.GetPermissionByCode(
+		ctx,
+		code,
+	)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("get permission by code: %w", err)
 	}
 
 	return toDomain(row), nil

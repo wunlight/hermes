@@ -7,4 +7,19 @@ VALUES (
     $1,
     $2
 )
-RETURNING *;
+RETURNING
+    id,
+    code,
+    description,
+    created_at,
+    updated_at;
+
+-- name: GetPermissionByCode :one
+SELECT
+    id,
+    code,
+    description,
+    created_at,
+    updated_at
+FROM permissions
+WHERE code = $1;
