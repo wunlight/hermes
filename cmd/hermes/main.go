@@ -13,12 +13,25 @@ import (
 
 	"github.com/joho/godotenv"
 
+	"github.com/wunlight/hermes/internal/bootstrap"
 	"github.com/wunlight/hermes/internal/config"
 	"github.com/wunlight/hermes/internal/database"
 	"github.com/wunlight/hermes/internal/logger"
 	"github.com/wunlight/hermes/internal/router"
 	"github.com/wunlight/hermes/internal/server"
 )
+
+func main() {
+	godotenv.Load()
+
+	logger := logger.New()
+	slog.SetDefault(logger)
+
+	if err := run(); err != nil {
+		slog.Error("application startup failed", "error", err)
+		os.Exit(1)
+	}
+}
 
 func run() error {
 	ctx, stop := signal.NotifyContext(
@@ -40,7 +53,7 @@ func run() error {
 	defer db.Close()
 
 	r := router.New()
-	router.Register(r, db)
+	bootstrap.Register(r, db)
 
 	srv := server.New(cfg.HTTP, r)
 	serverErr := make(chan error, 1)
@@ -80,16 +93,4 @@ func run() error {
 	slog.Info("http server stopped")
 
 	return nil
-}
-
-func main() {
-	godotenv.Load()
-
-	logger := logger.New()
-	slog.SetDefault(logger)
-
-	if err := run(); err != nil {
-		slog.Error("application startup failed", "error", err)
-		os.Exit(1)
-	}
 }

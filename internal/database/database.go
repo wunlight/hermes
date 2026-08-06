@@ -23,14 +23,14 @@ func New(ctx context.Context, cfg config.DatabaseConfig) (*DB, error) {
 		cfg.SSLMode,
 	)
 
-	poolConfig, err := pgxpool.ParseConfig(dsn)
+	poolCfg, err := pgxpool.ParseConfig(dsn)
 	if err != nil {
-		return nil, fmt.Errorf("parse database config: %w", err)
+		return nil, fmt.Errorf("parse config: %w", err)
 	}
 
-	pool, err := pgxpool.NewWithConfig(ctx, poolConfig)
+	pool, err := pgxpool.NewWithConfig(ctx, poolCfg)
 	if err != nil {
-		return nil, fmt.Errorf("create database pool: %w", err)
+		return nil, fmt.Errorf("create pool: %w", err)
 	}
 
 	if err := pool.Ping(ctx); err != nil {

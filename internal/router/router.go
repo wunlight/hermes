@@ -1,12 +1,8 @@
 package router
 
 import (
-	"net/http"
-
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/wunlight/hermes/internal/bootstrap"
-	"github.com/wunlight/hermes/internal/database"
 )
 
 func New() *chi.Mux {
@@ -19,17 +15,15 @@ func New() *chi.Mux {
 	return r
 }
 
-func Register(r chi.Router, db *database.DB) {
-	executor := db.Executor()
+// func Register(r chi.Router, db *database.DB) {
+// 	r.Get("/health", health)
 
-	r.Get("/health", health)
+// 	bootstrap.Permission(r, db)
+// 	bootstrap.Role(r, db)
+// }
 
-	bootstrap.Permission(r, executor)
-	bootstrap.Role(r, executor)
-}
-
-func health(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	_, _ = w.Write([]byte(`{"status":"ok"}`))
-}
+// func health(w http.ResponseWriter, r *http.Request) {
+// 	w.Header().Set("Content-Type", "application/json")
+// 	w.WriteHeader(http.StatusOK)
+// 	_, _ = w.Write([]byte(`{"status":"ok"}`))
+// }
