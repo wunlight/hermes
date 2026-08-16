@@ -3,6 +3,7 @@ package router
 import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 )
 
 func New() *chi.Mux {
@@ -12,18 +13,26 @@ func New() *chi.Mux {
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Recoverer)
 
+	r.Use(cors.Handler(cors.Options{
+		AllowedOrigins: []string{
+			"http://localhost:5173",
+		},
+		AllowedMethods: []string{
+			"GET",
+			"POST",
+			"PUT",
+			"PATCH",
+			"DELETE",
+			"OPTIONS",
+		},
+		AllowedHeaders: []string{
+			"Accept",
+			"Authorization",
+			"Content-Type",
+		},
+		AllowCredentials: true,
+		MaxAge:           300,
+	}))
+
 	return r
 }
-
-// func Register(r chi.Router, db *database.DB) {
-// 	r.Get("/health", health)
-
-// 	bootstrap.Permission(r, db)
-// 	bootstrap.Role(r, db)
-// }
-
-// func health(w http.ResponseWriter, r *http.Request) {
-// 	w.Header().Set("Content-Type", "application/json")
-// 	w.WriteHeader(http.StatusOK)
-// 	_, _ = w.Write([]byte(`{"status":"ok"}`))
-// }

@@ -15,8 +15,8 @@ import (
 
 	"github.com/wunlight/hermes/internal/bootstrap"
 	"github.com/wunlight/hermes/internal/config"
-	"github.com/wunlight/hermes/internal/database"
-	"github.com/wunlight/hermes/internal/logger"
+	"github.com/wunlight/hermes/internal/infrastructure/database"
+	"github.com/wunlight/hermes/internal/infrastructure/logger"
 	"github.com/wunlight/hermes/internal/router"
 	"github.com/wunlight/hermes/internal/server"
 )
