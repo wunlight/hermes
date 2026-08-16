@@ -8,6 +8,10 @@ import (
 	"github.com/google/uuid"
 )
 
+type Claims struct {
+	jwt.RegisteredClaims
+}
+
 type Manager struct {
 	secret     []byte
 	issuer     string
