@@ -15,3 +15,8 @@ type User struct {
 	UpdatedAt    time.Time
 	DeletedAt    *time.Time
 }
+
+type UpdateRequest struct {
+	Email string `json:"email"`
+	Name  string `json:"name"`
+}

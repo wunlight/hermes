@@ -2,11 +2,11 @@ package user
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"fmt"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 
 	"github.com/wunlight/hermes/internal/infrastructure/adapters/pg_util"
 	"github.com/wunlight/hermes/internal/infrastructure/adapters/sqlc"
@@ -56,7 +56,7 @@ func (r *sqlcRepository) GetByEmail(ctx context.Context, email string) (*User, e
 
 	row, err := queries.GetUserByEmail(ctx, email)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
+		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, ErrNotFound
 		}
 
