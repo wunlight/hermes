@@ -1,4 +1,6 @@
+import useAuthStore from "@/core/stores/authStore";
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import { Login } from "../service/service";
 import type { LoginRequest } from "../types/types";
 
@@ -8,12 +10,20 @@ const LoginView = () => {
 
   const [showPassword, setShowPassword] = useState(false);
 
+  const setAuth = useAuthStore((state) => state.setAuth);
+
+  const navigate = useNavigate();
+
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const req: LoginRequest = { email, password };
 
-    await Login(req);
+    const res = await Login(req);
+
+    setAuth(res.userID, res.accessToken);
+
+    navigate("/", { replace: true });
   };
 
   return (
@@ -52,7 +62,9 @@ const LoginView = () => {
                 onClick={() => setShowPassword((value) => !value)}
                 className="absolute right-2 top-1/2 -translate-1/2"
               >
-                O
+                <span
+                  className={`${showPassword ? "icon-[mdi--eye-off]" : "icon-[mdi--eye]"} text-slate-500`}
+                />
               </button>
             </div>
           </div>

@@ -1,7 +1,12 @@
 import authApi from "../api/api";
-import type { LoginRequest } from "../types/types";
+import type { LoginDomainResponse, LoginRequest } from "../types/types";
 
-export const Login = async (req: LoginRequest) => {
+export const Login = async (
+  req: LoginRequest,
+): Promise<LoginDomainResponse> => {
   const { data } = await authApi.login(req);
-  console.log(data);
+  return {
+    accessToken: data.access_token,
+    userID: data.user_id,
+  };
 };
