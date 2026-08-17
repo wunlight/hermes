@@ -13,14 +13,12 @@ import (
 	"github.com/wunlight/hermes/internal/infrastructure/security/password"
 )
 
-func Auth(r chi.Router, db *database.DB) {
+func Auth(r chi.Router, db *database.DB, tokenManager jwt.TokenManager) {
 	userRepo := user.NewRepository(db.Executor())
 
 	refreshTokenRepo := refresh_token.NewRepository(db.Executor())
 
 	passwordHasher := password.NewArgon()
-
-	tokenManager := jwt.NewManager("your-secret", "hermes", 15*time.Minute)
 
 	authService := auth.NewService(userRepo, refreshTokenRepo, passwordHasher, tokenManager, 7*24*time.Hour)
 
