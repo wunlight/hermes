@@ -3,12 +3,16 @@ export type LoginRequest = {
   password: string;
 };
 
-export type LoginResponse = {
+export type LoginDTOResponse = {
   user_id: string;
   access_token: string;
 };
 
-export type LoginDomainResponse = {
+export type LoginResponse = {
   userID: string;
   accessToken: string;
 };
+
+export type RefreshDTOResponse = LoginDTOResponse;
+
+export type RefreshResponse = LoginResponse;

@@ -1,4 +1,4 @@
-import useAuthStore from "@/core/stores/authStore";
+import useAuthStore from "@/features/auth/stores/authStore";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { Login } from "../service/service";

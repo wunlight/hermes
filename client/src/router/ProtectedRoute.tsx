@@ -1,10 +1,14 @@
-import useAuthStore from "@/core/stores/authStore";
+import useAuthStore from "@/features/auth/stores/authStore";
 import { Navigate, Outlet } from "react-router";
 
 const ProtectedRoute = () => {
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const { accessToken, isLoading } = useAuthStore();
 
-  if (!isAuthenticated) {
+  if (isLoading) {
+    return <div className="grid place-content-center h-dvh">Loading...</div>;
+  }
+
+  if (accessToken === null) {
     return <Navigate to="/login" replace />;
   }
 

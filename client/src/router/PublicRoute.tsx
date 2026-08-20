@@ -1,10 +1,10 @@
-import useAuthStore from "@/core/stores/authStore";
+import useAuthStore from "@/features/auth/stores/authStore";
 import { Navigate, Outlet } from "react-router";
 
 const PublicRoute = () => {
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const { accessToken } = useAuthStore();
 
-  if (isAuthenticated) {
+  if (accessToken !== null) {
     return <Navigate to="/" replace />;
   }
 
