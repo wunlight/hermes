@@ -96,7 +96,7 @@ export default function Sidebar() {
   };
 
   return (
-    <div className="flex h-full w-48 flex-col gap-2.5 bg-indigo-700 py-5 pl-2.5">
+    <div className="flex h-full w-60 flex-col gap-2.5 bg-indigo-700 py-5 pl-2.5">
       {itemList.map(renderItem)}
     </div>
   );
