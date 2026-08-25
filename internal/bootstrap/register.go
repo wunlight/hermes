@@ -17,5 +17,9 @@ func Register(r chi.Router, db *database.DB) {
 	authMiddleware := middleware.NewAuthMiddleware(tokenManager)
 
 	Auth(r, db, tokenManager)
+
+	// Products
+	Category(r, db, authMiddleware)
+
 	User(r, db, authMiddleware)
 }
