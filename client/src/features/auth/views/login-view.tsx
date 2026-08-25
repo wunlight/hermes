@@ -1,7 +1,7 @@
 import useAuthStore from "@/features/auth/stores/authStore";
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { Login } from "../services/service";
+import { Login } from "../services/services";
 import type { LoginRequest } from "../types/types";
 
 const LoginView = () => {

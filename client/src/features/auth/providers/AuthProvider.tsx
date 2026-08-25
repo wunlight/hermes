@@ -1,5 +1,5 @@
 import { useEffect, type ReactNode } from "react";
-import { Refresh } from "../services/service";
+import { Refresh } from "../services/services";
 import useAuthStore from "../stores/authStore";
 import type { RefreshResponse } from "../types/types";
 
