@@ -1,4 +1,4 @@
-import httpClient from "@/core/utils/httpClient";
+import httpClient from "@/core/utils/http-client";
 import type {
   LoginDTOResponse,
   LoginRequest,
