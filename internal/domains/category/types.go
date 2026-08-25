@@ -28,3 +28,12 @@ type UpdateRequest struct {
 	Code     string  `json:"code"`
 	Name     string  `json:"name"`
 }
+
+type CategoryResponse struct {
+	ID        uuid.UUID  `json:"id"`
+	ParentID  *uuid.UUID `json:"parent_id"`
+	Code      string     `json:"code"`
+	Name      string     `json:"name"`
+	CreatedAt time.Time  `json:"created_at"`
+	UpdatedAt time.Time  `json:"updated_at"`
+}

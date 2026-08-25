@@ -24,7 +24,12 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writeJSON(w, http.StatusOK, categories)
+	responses := make([]*CategoryResponse, 0, len(categories))
+	for _, category := range categories {
+		responses = append(responses, toResponse(category))
+	}
+
+	writeJSON(w, http.StatusOK, responses)
 }
 
 func (h *Handler) GetByID(w http.ResponseWriter, r *http.Request) {
@@ -36,7 +41,7 @@ func (h *Handler) GetByID(w http.ResponseWriter, r *http.Request) {
 
 	category, err := h.service.GetByID(r.Context(), id)
 
-	writeJSON(w, http.StatusOK, category)
+	writeJSON(w, http.StatusOK, toResponse(category))
 }
 
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
@@ -53,7 +58,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writeJSON(w, http.StatusOK, category)
+	writeJSON(w, http.StatusOK, toResponse(category))
 }
 
 func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
@@ -76,7 +81,7 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writeJSON(w, http.StatusOK, category)
+	writeJSON(w, http.StatusOK, toResponse(category))
 }
 
 func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
@@ -126,5 +131,20 @@ func (h *Handler) handleError(w http.ResponseWriter, err error) {
 
 	default:
 		writeError(w, http.StatusInternalServerError, "internal server error")
+	}
+}
+
+func toResponse(category *Category) *CategoryResponse {
+	if category == nil {
+		return nil
+	}
+
+	return &CategoryResponse{
+		ID:        category.ID,
+		ParentID:  category.ParentID,
+		Code:      category.Code,
+		Name:      category.Name,
+		CreatedAt: category.CreatedAt,
+		UpdatedAt: category.UpdatedAt,
 	}
 }
