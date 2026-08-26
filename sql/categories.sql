@@ -66,7 +66,7 @@ RETURNING
 
 
 
--- name: DeleteCategory :exec
+-- name: DeleteCategory :execresult
 UPDATE categories
 SET
     deleted_at = NOW(),

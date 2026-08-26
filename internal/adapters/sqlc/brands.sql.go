@@ -9,6 +9,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgconn"
 )
 
 const createBrand = `-- name: CreateBrand :one
@@ -45,7 +46,7 @@ func (q *Queries) CreateBrand(ctx context.Context, arg CreateBrandParams) (Brand
 	return i, err
 }
 
-const deleteBrand = `-- name: DeleteBrand :exec
+const deleteBrand = `-- name: DeleteBrand :execresult
 UPDATE brands
 SET
     deleted_at = NOW(),
@@ -54,9 +55,8 @@ WHERE id = $1
   AND deleted_at IS NULL
 `
 
-func (q *Queries) DeleteBrand(ctx context.Context, id uuid.UUID) error {
-	_, err := q.db.Exec(ctx, deleteBrand, id)
-	return err
+func (q *Queries) DeleteBrand(ctx context.Context, id uuid.UUID) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, deleteBrand, id)
 }
 
 const getBrandByCode = `-- name: GetBrandByCode :one

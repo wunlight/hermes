@@ -2,9 +2,12 @@ package category
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/wunlight/hermes/internal/adapters/sqlc"
 	"github.com/wunlight/hermes/internal/infrastructure/adapters/pg_util"
 )
@@ -39,6 +42,10 @@ func (r *sqlcRepository) GetByID(ctx context.Context, id uuid.UUID) (*Category, 
 
 	row, err := queries.GetCategoryByID(ctx, id)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, ErrNotFound
+		}
+
 		return nil, fmt.Errorf("get category by id: %w", err)
 	}
 
@@ -50,6 +57,10 @@ func (r *sqlcRepository) GetByCode(ctx context.Context, code string) (*Category,
 
 	row, err := queries.GetCategoryByCode(ctx, code)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, ErrNotFound
+		}
+
 		return nil, fmt.Errorf("get category by code: %w", err)
 	}
 
@@ -68,6 +79,10 @@ func (r *sqlcRepository) Create(ctx context.Context, category *Category) (*Categ
 		},
 	)
 	if err != nil {
+		if isUniqueViolation(err) {
+			return nil, ErrCodeAlreadyExists
+		}
+
 		return nil, fmt.Errorf("create category: %w", err)
 	}
 
@@ -80,10 +95,17 @@ func (r *sqlcRepository) Update(ctx context.Context, category *Category) (*Categ
 	row, err := queries.UpdateCategory(
 		ctx,
 		sqlc.UpdateCategoryParams{
-			ID: category.ID,
+			ID:       category.ID,
+			ParentID: category.ParentID,
+			Code:     category.Code,
+			Name:     category.Name,
 		},
 	)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, ErrNotFound
+		}
+
 		return nil, fmt.Errorf("update category: %w", err)
 	}
 
@@ -93,8 +115,14 @@ func (r *sqlcRepository) Update(ctx context.Context, category *Category) (*Categ
 func (r *sqlcRepository) Delete(ctx context.Context, id uuid.UUID) error {
 	queries := sqlc.New(r.db)
 
-	if err := queries.DeleteCategory(ctx, id); err != nil {
+	result, err := queries.DeleteBrand(ctx, id)
+	if err != nil {
 		return fmt.Errorf("delete category: %w", err)
+	}
+
+	rowsAffected := result.RowsAffected()
+	if rowsAffected == 0 {
+		return ErrNotFound
 	}
 
 	return nil
@@ -109,4 +137,11 @@ func toDomain(row sqlc.Category) *Category {
 		UpdatedAt: *pg_util.TimestamptzToTime(row.UpdatedAt),
 		DeletedAt: pg_util.TimestamptzToTime(row.DeletedAt),
 	}
+}
+
+func isUniqueViolation(err error) bool {
+	var pgErr *pgconn.PgError
+
+	return errors.As(err, &pgErr) &&
+		pgErr.Code == "23505"
 }

@@ -60,7 +60,7 @@ RETURNING
 
 
 
--- name: DeleteBrand :exec
+-- name: DeleteBrand :execresult
 UPDATE brands
 SET
     deleted_at = NOW(),

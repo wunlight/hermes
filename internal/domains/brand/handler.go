@@ -13,15 +13,15 @@ func NewHandler(service *Service) *Handler {
 	return &Handler{service: service}
 }
 
-func (h *Handler) List(w http.ResponseWriter, r *http.Request)
+// func (h *Handler) List(w http.ResponseWriter, r *http.Request)
 
-func (h *Handler) GetByID(w http.ResponseWriter, r *http.Request)
+// func (h *Handler) GetByID(w http.ResponseWriter, r *http.Request)
 
-func (h *Handler) Create(w http.ResponseWriter, r *http.Request)
+// func (h *Handler) Create(w http.ResponseWriter, r *http.Request)
 
-func (h *Handler) Update(w http.ResponseWriter, r *http.Request)
+// func (h *Handler) Update(w http.ResponseWriter, r *http.Request)
 
-func (h *Handler) Delete(w http.ResponseWriter, r *http.Request)
+// func (h *Handler) Delete(w http.ResponseWriter, r *http.Request)
 
 func writeJSON(w http.ResponseWriter, status int, data any) {
 	w.Header().Set("Content-Type", "application/json")

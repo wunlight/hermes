@@ -9,6 +9,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgconn"
 )
 
 const createCategory = `-- name: CreateCategory :one
@@ -49,7 +50,7 @@ func (q *Queries) CreateCategory(ctx context.Context, arg CreateCategoryParams) 
 	return i, err
 }
 
-const deleteCategory = `-- name: DeleteCategory :exec
+const deleteCategory = `-- name: DeleteCategory :execresult
 UPDATE categories
 SET
     deleted_at = NOW(),
@@ -58,9 +59,8 @@ WHERE id = $1
   AND deleted_at IS NULL
 `
 
-func (q *Queries) DeleteCategory(ctx context.Context, id uuid.UUID) error {
-	_, err := q.db.Exec(ctx, deleteCategory, id)
-	return err
+func (q *Queries) DeleteCategory(ctx context.Context, id uuid.UUID) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, deleteCategory, id)
 }
 
 const getCategoryByCode = `-- name: GetCategoryByCode :one
