@@ -1,4 +1,4 @@
-package category
+package brand
 
 import (
 	"github.com/go-chi/chi/v5"
@@ -6,7 +6,7 @@ import (
 )
 
 func Mount(r chi.Router, handler *Handler, auth *middleware.AuthMiddleware) {
-	r.Route("/category", func(r chi.Router) {
+	r.Route("/brand", func(r chi.Router) {
 		r.Use(auth.RequireAuth)
 
 		r.Get("/", handler.List)

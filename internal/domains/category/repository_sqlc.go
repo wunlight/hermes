@@ -17,22 +17,21 @@ func NewRepository(db sqlc.DBTX) Repository {
 	return &sqlcRepository{db: db}
 }
 
-func (r *sqlcRepository) Create(ctx context.Context, category *Category) (*Category, error) {
+func (r *sqlcRepository) List(ctx context.Context) ([]*Category, error) {
 	queries := sqlc.New(r.db)
 
-	row, err := queries.CreateCategory(
-		ctx,
-		sqlc.CreateCategoryParams{
-			ParentID: category.ParentID,
-			Code:     category.Code,
-			Name:     category.Name,
-		},
-	)
+	rows, err := queries.ListCategories(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("create category: %w", err)
+		return nil, fmt.Errorf("list categories: %w", err)
 	}
 
-	return toDomain(row), nil
+	categories := make([]*Category, 0, len(rows))
+
+	for _, row := range rows {
+		categories = append(categories, toDomain(row))
+	}
+
+	return categories, nil
 }
 
 func (r *sqlcRepository) GetByID(ctx context.Context, id uuid.UUID) (*Category, error) {
@@ -52,6 +51,24 @@ func (r *sqlcRepository) GetByCode(ctx context.Context, code string) (*Category,
 	row, err := queries.GetCategoryByCode(ctx, code)
 	if err != nil {
 		return nil, fmt.Errorf("get category by code: %w", err)
+	}
+
+	return toDomain(row), nil
+}
+
+func (r *sqlcRepository) Create(ctx context.Context, category *Category) (*Category, error) {
+	queries := sqlc.New(r.db)
+
+	row, err := queries.CreateCategory(
+		ctx,
+		sqlc.CreateCategoryParams{
+			ParentID: category.ParentID,
+			Code:     category.Code,
+			Name:     category.Name,
+		},
+	)
+	if err != nil {
+		return nil, fmt.Errorf("create category: %w", err)
 	}
 
 	return toDomain(row), nil
@@ -81,23 +98,6 @@ func (r *sqlcRepository) Delete(ctx context.Context, id uuid.UUID) error {
 	}
 
 	return nil
-}
-
-func (r *sqlcRepository) List(ctx context.Context) ([]*Category, error) {
-	queries := sqlc.New(r.db)
-
-	rows, err := queries.ListCategories(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("list categories: %w", err)
-	}
-
-	categories := make([]*Category, 0, len(rows))
-
-	for _, row := range rows {
-		categories = append(categories, toDomain(row))
-	}
-
-	return categories, nil
 }
 
 func toDomain(row sqlc.Category) *Category {
