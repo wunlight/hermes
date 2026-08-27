@@ -8,6 +8,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"net/mail"
 	"strings"
 	"time"
 
@@ -76,6 +77,46 @@ func (s *Service) Register(ctx context.Context, req RegisterRequest) (*user.User
 	}
 
 	return createdUser, nil
+}
+
+func validateRegisterRequest(email string, password string, name string) error {
+	if email == "" {
+		return ErrEmailRequired
+	}
+
+	if !isValidEmail(email) {
+		return ErrInvalidEmail
+	}
+
+	if password == "" {
+		return ErrPasswordRequired
+	}
+
+	if len(password) < 8 {
+		return ErrPasswordTooShort
+	}
+
+	if len(password) > 128 {
+		return ErrPasswordTooLong
+	}
+
+	name = strings.TrimSpace(name)
+
+	if name == "" {
+		return ErrNameRequired
+	}
+
+	if len(name) > 255 {
+		return ErrNameTooLong
+	}
+
+	return nil
+}
+
+func isValidEmail(email string) bool {
+	_, err := mail.ParseAddress(email)
+
+	return err == nil
 }
 
 func (s *Service) Login(ctx context.Context, req LoginRequest) (*AuthResponse, error) {
