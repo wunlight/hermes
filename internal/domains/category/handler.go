@@ -24,18 +24,18 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	responses := make([]*CategoryResponse, 0, len(categories))
+	res := make([]*CategoryResponse, 0, len(categories))
 	for _, category := range categories {
-		responses = append(responses, toResponse(category))
+		res = append(res, toResponse(category))
 	}
 
-	writeJSON(w, http.StatusOK, responses)
+	writeJSON(w, http.StatusOK, res)
 }
 
 func (h *Handler) GetByID(w http.ResponseWriter, r *http.Request) {
 	id, err := uuid.Parse(chi.URLParam(r, "id"))
 	if err != nil {
-		writeError(w, http.StatusBadRequest, "invalid category id")
+		writeError(w, http.StatusBadRequest, ErrInvalidID.Error())
 		return
 	}
 
@@ -45,7 +45,7 @@ func (h *Handler) GetByID(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
-	var req CreateRequest
+	var req CreateReq
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		writeError(w, http.StatusBadRequest, "invalid request body")
@@ -64,11 +64,11 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	id, err := uuid.Parse(chi.URLParam(r, "id"))
 	if err != nil {
-		writeError(w, http.StatusBadRequest, "invalid category id")
+		writeError(w, http.StatusBadRequest, ErrInvalidID.Error())
 		return
 	}
 
-	var req UpdateRequest
+	var req UpdateReq
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		writeError(w, http.StatusBadRequest, "invalid request body")
@@ -87,7 +87,7 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 	id, err := uuid.Parse(chi.URLParam(r, "id"))
 	if err != nil {
-		writeError(w, http.StatusBadRequest, "invalid category id")
+		writeError(w, http.StatusBadRequest, ErrInvalidID.Error())
 		return
 	}
 

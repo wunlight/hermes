@@ -16,13 +16,13 @@ type Category struct {
 	DeletedAt *time.Time
 }
 
-type CreateRequest struct {
+type CreateReq struct {
 	ParentID *string `json:"parent_id"`
 	Code     string  `json:"code"`
 	Name     string  `json:"name"`
 }
 
-type UpdateRequest struct {
+type UpdateReq struct {
 	ID       string  `json:"id"`
 	ParentID *string `json:"parent_id"`
 	Code     string  `json:"code"`

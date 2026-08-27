@@ -43,11 +43,8 @@ func (s *Service) GetByID(ctx context.Context, id uuid.UUID) (*Category, error) 
 	return result, nil
 }
 
-func (s *Service) Create(ctx context.Context, req CreateRequest) (*Category, error) {
+func (s *Service) Create(ctx context.Context, req CreateReq) (*Category, error) {
 	var parentID *uuid.UUID
-
-	code := strings.TrimSpace(req.Code)
-	name := strings.TrimSpace(req.Name)
 
 	if req.ParentID != nil {
 		parsedParentID, err := s.validateParent(ctx, req.ParentID)
@@ -58,7 +55,8 @@ func (s *Service) Create(ctx context.Context, req CreateRequest) (*Category, err
 		parentID = parsedParentID
 	}
 
-	if err := validateRequest(code, name); err != nil {
+	code, name, err := validateIdentityRequest(req.Code, req.Name)
+	if err != nil {
 		return nil, err
 	}
 
@@ -81,15 +79,12 @@ func (s *Service) Create(ctx context.Context, req CreateRequest) (*Category, err
 	return createdCategory, nil
 }
 
-func (s *Service) Update(ctx context.Context, id uuid.UUID, req UpdateRequest) (*Category, error) {
+func (s *Service) Update(ctx context.Context, id uuid.UUID, req UpdateReq) (*Category, error) {
 	if id == uuid.Nil {
 		return nil, ErrInvalidID
 	}
 
 	var parentID *uuid.UUID
-
-	code := strings.TrimSpace(req.Code)
-	name := strings.TrimSpace(req.Name)
 
 	if req.ParentID != nil {
 		parsedParentID, err := s.validateParent(ctx, req.ParentID)
@@ -100,11 +95,12 @@ func (s *Service) Update(ctx context.Context, id uuid.UUID, req UpdateRequest) (
 		parentID = parsedParentID
 	}
 
-	if err := validateRequest(code, name); err != nil {
+	code, name, err := validateIdentityRequest(req.Code, req.Name)
+	if err != nil {
 		return nil, err
 	}
 
-	_, err := s.repository.GetByID(ctx, id)
+	_, err = s.repository.GetByID(ctx, id)
 	if err != nil {
 		if !errors.Is(err, ErrNotFound) {
 			return nil, fmt.Errorf("check existing category: %w", err)
@@ -187,14 +183,17 @@ func (s *Service) validateCodeUnique(ctx context.Context, code string, excludeID
 	return ErrCategoryAlreadyExists
 }
 
-func validateRequest(code, name string) error {
+func validateIdentityRequest(rawCode, rawName string) (string, string, error) {
+	code := strings.TrimSpace(rawCode)
+	name := strings.TrimSpace(rawName)
+
 	if code == "" {
-		return ErrCodeRequired
+		return "", "", ErrCodeRequired
 	}
 
 	if name == "" {
-		return ErrNameRequired
+		return "", "", ErrNameRequired
 	}
 
-	return nil
+	return code, name, nil
 }
