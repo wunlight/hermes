@@ -65,7 +65,6 @@ func (s *Service) Create(ctx context.Context, req CreateReq) (*Category, error) 
 	}
 
 	newCategory := &Category{
-		ID:       uuid.New(),
 		ParentID: parentID,
 		Code:     code,
 		Name:     name,

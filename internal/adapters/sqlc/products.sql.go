@@ -23,10 +23,9 @@ INSERT INTO products (
     weight,
     length,
     width,
-    description,
-    status
+    description
 )
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 RETURNING
     id,
     sku,
@@ -56,7 +55,6 @@ type CreateProductParams struct {
 	Length      pgtype.Numeric
 	Width       pgtype.Numeric
 	Description pgtype.Text
-	Status      string
 }
 
 func (q *Queries) CreateProduct(ctx context.Context, arg CreateProductParams) (Product, error) {
@@ -71,7 +69,6 @@ func (q *Queries) CreateProduct(ctx context.Context, arg CreateProductParams) (P
 		arg.Length,
 		arg.Width,
 		arg.Description,
-		arg.Status,
 	)
 	var i Product
 	err := row.Scan(
@@ -256,183 +253,6 @@ func (q *Queries) ListProducts(ctx context.Context) ([]Product, error) {
 	return items, nil
 }
 
-const listProductsByBrand = `-- name: ListProductsByBrand :many
-SELECT
-    id,
-    sku,
-    name,
-    category_id,
-    brand_id,
-    unit_id,
-    min_stock,
-    weight,
-    length,
-    width,
-    description,
-    status,
-    created_at,
-    updated_at,
-    deleted_at
-FROM products
-WHERE brand_id = $1
-  AND deleted_at IS NULL
-ORDER BY name ASC
-`
-
-func (q *Queries) ListProductsByBrand(ctx context.Context, brandID *uuid.UUID) ([]Product, error) {
-	rows, err := q.db.Query(ctx, listProductsByBrand, brandID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []Product
-	for rows.Next() {
-		var i Product
-		if err := rows.Scan(
-			&i.ID,
-			&i.Sku,
-			&i.Name,
-			&i.CategoryID,
-			&i.BrandID,
-			&i.UnitID,
-			&i.MinStock,
-			&i.Weight,
-			&i.Length,
-			&i.Width,
-			&i.Description,
-			&i.Status,
-			&i.CreatedAt,
-			&i.UpdatedAt,
-			&i.DeletedAt,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const listProductsByCategory = `-- name: ListProductsByCategory :many
-SELECT
-    id,
-    sku,
-    name,
-    category_id,
-    brand_id,
-    unit_id,
-    min_stock,
-    weight,
-    length,
-    width,
-    description,
-    status,
-    created_at,
-    updated_at,
-    deleted_at
-FROM products
-WHERE category_id = $1
-  AND deleted_at IS NULL
-ORDER BY name ASC
-`
-
-func (q *Queries) ListProductsByCategory(ctx context.Context, categoryID uuid.UUID) ([]Product, error) {
-	rows, err := q.db.Query(ctx, listProductsByCategory, categoryID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []Product
-	for rows.Next() {
-		var i Product
-		if err := rows.Scan(
-			&i.ID,
-			&i.Sku,
-			&i.Name,
-			&i.CategoryID,
-			&i.BrandID,
-			&i.UnitID,
-			&i.MinStock,
-			&i.Weight,
-			&i.Length,
-			&i.Width,
-			&i.Description,
-			&i.Status,
-			&i.CreatedAt,
-			&i.UpdatedAt,
-			&i.DeletedAt,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const listProductsByStatus = `-- name: ListProductsByStatus :many
-SELECT
-    id,
-    sku,
-    name,
-    category_id,
-    brand_id,
-    unit_id,
-    min_stock,
-    weight,
-    length,
-    width,
-    description,
-    status,
-    created_at,
-    updated_at,
-    deleted_at
-FROM products
-WHERE status = $1
-  AND deleted_at IS NULL
-ORDER BY name ASC
-`
-
-func (q *Queries) ListProductsByStatus(ctx context.Context, status string) ([]Product, error) {
-	rows, err := q.db.Query(ctx, listProductsByStatus, status)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []Product
-	for rows.Next() {
-		var i Product
-		if err := rows.Scan(
-			&i.ID,
-			&i.Sku,
-			&i.Name,
-			&i.CategoryID,
-			&i.BrandID,
-			&i.UnitID,
-			&i.MinStock,
-			&i.Weight,
-			&i.Length,
-			&i.Width,
-			&i.Description,
-			&i.Status,
-			&i.CreatedAt,
-			&i.UpdatedAt,
-			&i.DeletedAt,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
 const updateProduct = `-- name: UpdateProduct :one
 UPDATE products
 SET
@@ -446,7 +266,6 @@ SET
     length = $9,
     width = $10,
     description = $11,
-    status = $12,
     updated_at = NOW()
 WHERE id = $1
   AND deleted_at IS NULL
@@ -480,7 +299,6 @@ type UpdateProductParams struct {
 	Length      pgtype.Numeric
 	Width       pgtype.Numeric
 	Description pgtype.Text
-	Status      string
 }
 
 func (q *Queries) UpdateProduct(ctx context.Context, arg UpdateProductParams) (Product, error) {
@@ -496,7 +314,6 @@ func (q *Queries) UpdateProduct(ctx context.Context, arg UpdateProductParams) (P
 		arg.Length,
 		arg.Width,
 		arg.Description,
-		arg.Status,
 	)
 	var i Product
 	err := row.Scan(

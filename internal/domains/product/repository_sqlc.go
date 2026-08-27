@@ -8,7 +8,9 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/wunlight/hermes/internal/adapters/sqlc"
+	"github.com/wunlight/hermes/internal/infrastructure/adapters/pg_util"
 )
 
 type sqlcRepository struct {
@@ -54,15 +56,29 @@ func (r *sqlcRepository) GetByID(ctx context.Context, id uuid.UUID) (*Product, e
 func (r *sqlcRepository) Create(ctx context.Context, product *Product) (*Product, error) {
 	queries := sqlc.New(r.db)
 
+	weight, length, width, err := measurementsToNumeric(product.Weight, product.Length, product.Width)
+	if err != nil {
+		return nil, fmt.Errorf("convert measurements: %w", err)
+	}
+
 	row, err := queries.CreateProduct(
 		ctx,
 		sqlc.CreateProductParams{
-			Name: product.Name,
+			Sku:         product.SKU,
+			Name:        product.Name,
+			CategoryID:  product.CategoryID,
+			BrandID:     &product.BrandID,
+			UnitID:      product.UnitID,
+			MinStock:    product.MinStock,
+			Weight:      weight,
+			Length:      length,
+			Width:       width,
+			Description: pg_util.NullableStringToText(product.Description),
 		},
 	)
 	if err != nil {
 		if isUniqueViolation(err) {
-			return nil, ErrCodeAlreadyExists
+			return nil, ErrSKUAlreadyExists
 		}
 
 		return nil, fmt.Errorf("create product: %w", err)
@@ -74,11 +90,25 @@ func (r *sqlcRepository) Create(ctx context.Context, product *Product) (*Product
 func (r *sqlcRepository) Update(ctx context.Context, product *Product) (*Product, error) {
 	queries := sqlc.New(r.db)
 
+	weight, length, width, err := measurementsToNumeric(product.Weight, product.Length, product.Width)
+	if err != nil {
+		return nil, fmt.Errorf("convert measurements: %w", err)
+	}
+
 	row, err := queries.UpdateProduct(
 		ctx,
 		sqlc.UpdateProductParams{
-			ID:   product.ID,
-			Name: product.Name,
+			ID:          product.ID,
+			Sku:         product.SKU,
+			Name:        product.Name,
+			CategoryID:  product.CategoryID,
+			BrandID:     &product.BrandID,
+			UnitID:      product.UnitID,
+			MinStock:    product.MinStock,
+			Weight:      weight,
+			Length:      length,
+			Width:       width,
+			Description: pg_util.NullableStringToText(product.Description),
 		},
 	)
 	if err != nil {
@@ -114,4 +144,23 @@ func isUniqueViolation(err error) bool {
 
 	return errors.As(err, &pgErr) &&
 		pgErr.Code == "23505"
+}
+
+func measurementsToNumeric(weight float32, length float32, width float32) (pgtype.Numeric, pgtype.Numeric, pgtype.Numeric, error) {
+	w, err := pg_util.MeasurementToNumeric(weight)
+	if err != nil {
+		return pgtype.Numeric{}, pgtype.Numeric{}, pgtype.Numeric{}, err
+	}
+
+	l, err := pg_util.MeasurementToNumeric(length)
+	if err != nil {
+		return pgtype.Numeric{}, pgtype.Numeric{}, pgtype.Numeric{}, err
+	}
+
+	wd, err := pg_util.MeasurementToNumeric(width)
+	if err != nil {
+		return pgtype.Numeric{}, pgtype.Numeric{}, pgtype.Numeric{}, err
+	}
+
+	return w, l, wd, nil
 }

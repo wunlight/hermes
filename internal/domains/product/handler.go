@@ -123,10 +123,10 @@ func (h *Handler) handleError(w http.ResponseWriter, err error) {
 		writeError(w, http.StatusBadRequest, err.Error())
 
 	case errors.Is(err, ErrNameRequired),
-		errors.Is(err, ErrCodeRequired):
+		errors.Is(err, ErrSKURequired):
 		writeError(w, http.StatusBadRequest, err.Error())
 
-	case errors.Is(err, ErrCodeAlreadyExists):
+	case errors.Is(err, ErrSKUAlreadyExists):
 		writeError(w, http.StatusConflict, err.Error())
 
 	default:
@@ -134,14 +134,22 @@ func (h *Handler) handleError(w http.ResponseWriter, err error) {
 	}
 }
 
-func toResponse(category *Product) *ProductResponse {
-	if category == nil {
+func toResponse(product *Product) *ProductResponse {
+	if product == nil {
 		return nil
 	}
 
 	return &ProductResponse{
-		ID:   category.ID,
-		Code: category.Code,
-		Name: category.Name,
+		ID:          product.ID,
+		SKU:         product.SKU,
+		Name:        product.Name,
+		CategoryID:  product.CategoryID,
+		BrandID:     product.BrandID,
+		UnitID:      product.UnitID,
+		MinStock:    product.MinStock,
+		Weight:      product.Weight,
+		Length:      product.Length,
+		Width:       product.Width,
+		Description: product.Description,
 	}
 }

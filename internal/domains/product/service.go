@@ -44,14 +44,46 @@ func (s *Service) GetByID(ctx context.Context, id uuid.UUID) (*Product, error) {
 }
 
 func (s *Service) Create(ctx context.Context, req CreateReq) (*Product, error) {
-	code, name, err := validateIdentityRequest(req.Code, req.Name)
+	sku, name, description, err := validateIdentityRequest(req.SKU, req.Name, req.Description)
 	if err != nil {
 		return nil, err
 	}
 
+	categoryID, err := uuid.Parse(req.CategoryID)
+	if err != nil {
+		return nil, ErrInvalidCategoryID
+	}
+
+	brandID, err := uuid.Parse(req.BrandID)
+	if err != nil {
+		return nil, ErrInvalidBrandID
+	}
+
+	unitID, err := uuid.Parse(req.UnitID)
+	if err != nil {
+		return nil, ErrInvalidUnitID
+	}
+
+	if err := validateMeasurementRequest(
+		req.MinStock,
+		req.Weight,
+		req.Length,
+		req.Width,
+	); err != nil {
+		return nil, err
+	}
+
 	newProduct := &Product{
-		Code: code,
-		Name: name,
+		SKU:         sku,
+		Name:        name,
+		CategoryID:  categoryID,
+		BrandID:     brandID,
+		UnitID:      unitID,
+		MinStock:    req.MinStock,
+		Weight:      req.Weight,
+		Length:      req.Length,
+		Width:       req.Width,
+		Description: description,
 	}
 
 	createdProduct, err := s.repository.Create(ctx, newProduct)
@@ -67,7 +99,7 @@ func (s *Service) Update(ctx context.Context, id uuid.UUID, req UpdateReq) (*Pro
 		return nil, ErrInvalidID
 	}
 
-	code, name, err := validateIdentityRequest(req.Code, req.Name)
+	sku, name, description, err := validateIdentityRequest(req.SKU, req.Name, req.Description)
 	if err != nil {
 		return nil, err
 	}
@@ -81,15 +113,47 @@ func (s *Service) Update(ctx context.Context, id uuid.UUID, req UpdateReq) (*Pro
 		return nil, ErrNotFound
 	}
 
+	categoryID, err := uuid.Parse(req.CategoryID)
+	if err != nil {
+		return nil, ErrInvalidCategoryID
+	}
+
+	brandID, err := uuid.Parse(req.BrandID)
+	if err != nil {
+		return nil, ErrInvalidBrandID
+	}
+
+	unitID, err := uuid.Parse(req.UnitID)
+	if err != nil {
+		return nil, ErrInvalidUnitID
+	}
+
+	if err := validateMeasurementRequest(
+		req.MinStock,
+		req.Weight,
+		req.Length,
+		req.Width,
+	); err != nil {
+		return nil, err
+	}
+
 	newProduct := &Product{
-		ID:   id,
-		Code: code,
-		Name: name,
+		ID:          id,
+		SKU:         sku,
+		Name:        name,
+		CategoryID:  categoryID,
+		BrandID:     brandID,
+		UnitID:      unitID,
+		MinStock:    req.MinStock,
+		Weight:      req.Weight,
+		Length:      req.Length,
+		Width:       req.Width,
+		Description: description,
 	}
 
 	updatedProduct, err := s.repository.Update(ctx, newProduct)
 	if err != nil {
-		return nil, fmt.Errorf("create product: %w", err)
+		return nil, fmt.Errorf("update product: %w", err)
 	}
 
 	return updatedProduct, nil
@@ -115,17 +179,47 @@ func (s *Service) Delete(ctx context.Context, id uuid.UUID) error {
 	return nil
 }
 
-func validateIdentityRequest(rawCode, rawName string) (string, string, error) {
-	code := strings.TrimSpace(rawCode)
+func validateIdentityRequest(rawSKU, rawName string, rawDescription *string) (string, string, *string, error) {
+	sku := strings.TrimSpace(rawSKU)
 	name := strings.TrimSpace(rawName)
 
-	if code == "" {
-		return "", "", ErrCodeRequired
+	if sku == "" {
+		return "", "", nil, ErrSKURequired
 	}
 
 	if name == "" {
-		return "", "", ErrNameRequired
+		return "", "", nil, ErrNameRequired
 	}
 
-	return code, name, nil
+	if rawDescription == nil {
+		return sku, name, nil, nil
+	}
+
+	description := strings.TrimSpace(*rawDescription)
+
+	if description == "" {
+		return sku, name, nil, nil
+	}
+
+	return sku, name, &description, nil
+}
+
+func validateMeasurementRequest(minStock int32, weight float32, length float32, width float32) error {
+	if minStock < 0 {
+		return ErrInvalidMinStock
+	}
+
+	if weight < 0 {
+		return ErrInvalidWeight
+	}
+
+	if length < 0 {
+		return ErrInvalidLength
+	}
+
+	if width < 0 {
+		return ErrInvalidWidth
+	}
+
+	return nil
 }
