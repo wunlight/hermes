@@ -21,6 +21,7 @@ func Register(r chi.Router, db *database.DB) {
 	// Products
 	Category(r, db, authMiddleware)
 	Brand(r, db, authMiddleware)
+	Unit(r, db, authMiddleware)
 
 	User(r, db, authMiddleware)
 }
