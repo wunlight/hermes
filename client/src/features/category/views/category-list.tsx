@@ -24,7 +24,6 @@ export default function CategoryList() {
       </div>
       <div className="">
         <DataTable value={categories}>
-          <Column field="code" header="Code" />
           <Column field="name" header="Name" />
           <Column body={<CategoryActions />} />
         </DataTable>

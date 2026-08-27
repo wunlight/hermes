@@ -22,7 +22,6 @@ export default function UnitList() {
       </div>
       <div className="">
         <DataTable value={units}>
-          <Column field="code" header="Code" />
           <Column field="name" header="Name" />
         </DataTable>
       </div>

@@ -73,15 +73,15 @@ export default function Sidebar() {
             className={({ isActive }) =>
               `flex h-9 items-center gap-4 rounded-l-full px-4 text-sm ${
                 isActive
-                  ? "bg-white text-indigo-900"
-                  : "text-white hover:bg-indigo-500"
+                  ? "bg-white text-indigo-950"
+                  : "text-white hover:bg-indigo-700"
               }`
             }
           >
             {content}
           </NavLink>
         ) : (
-          <div className="flex h-9 items-center gap-4 px-4 text-sm text-white hover:bg-indigo-500 rounded-l-full">
+          <div className="flex h-9 items-center gap-4 px-4 text-sm text-white hover:bg-indigo-700 rounded-l-full">
             {content}
           </div>
         )}
@@ -96,7 +96,7 @@ export default function Sidebar() {
   };
 
   return (
-    <div className="flex shrink-0 h-full w-60 flex-col gap-2.5 bg-indigo-700 py-5 pl-2.5">
+    <div className="flex shrink-0 h-full w-60 flex-col gap-2.5 bg-indigo-800 py-5 pl-2.5">
       {itemList.map(renderItem)}
     </div>
   );

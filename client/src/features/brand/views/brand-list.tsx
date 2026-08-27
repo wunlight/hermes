@@ -22,7 +22,6 @@ export default function BrandList() {
       </div>
       <div className="">
         <DataTable value={brands}>
-          <Column field="code" header="Code" />
           <Column field="name" header="Name" />
         </DataTable>
       </div>
