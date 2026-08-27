@@ -1,4 +1,5 @@
 import MainLayout from "@/core/layouts/main-layout";
+import BrandList from "@/features/brand/views/brand-list";
 import CategoryList from "@/features/category/views/category-list";
 import DashboardView from "@/features/dashboard/views/dashboard-view";
 import { Route, Routes } from "react-router";
@@ -20,7 +21,7 @@ export default function Router() {
           <Route path="/order" element={<DashboardView />} />
           <Route path="/report" element={<DashboardView />} />
           <Route path="/category" element={<CategoryList />} />
-          <Route path="/brand" element={<DashboardView />} />
+          <Route path="/brand" element={<BrandList />} />
           <Route path="/unit" element={<DashboardView />} />
           <Route path="/product" element={<DashboardView />} />
         </Route>
