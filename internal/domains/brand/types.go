@@ -15,6 +15,16 @@ type Brand struct {
 	DeletedAt *time.Time
 }
 
+type CreateReq struct {
+	Code string `json:"code"`
+	Name string `json:"name"`
+}
+
+type UpdateReq struct {
+	Code string `json:"code"`
+	Name string `json:"name"`
+}
+
 type BrandResponse struct {
 	ID        uuid.UUID `json:"id"`
 	Code      string    `json:"code"`

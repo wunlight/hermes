@@ -43,8 +43,8 @@ func (s *Service) GetByID(ctx context.Context, id uuid.UUID) (*Brand, error) {
 	return res, nil
 }
 
-func (s *Service) Create(ctx context.Context, req *Brand) (*Brand, error) {
-	code, name, err := validateIdentityRequest(req)
+func (s *Service) Create(ctx context.Context, req CreateReq) (*Brand, error) {
+	code, name, err := validateIdentityRequest(req.Code, req.Name)
 	if err != nil {
 		return nil, err
 	}
@@ -66,12 +66,12 @@ func (s *Service) Create(ctx context.Context, req *Brand) (*Brand, error) {
 	return createdBrand, nil
 }
 
-func (s *Service) Update(ctx context.Context, id uuid.UUID, req *Brand) (*Brand, error) {
+func (s *Service) Update(ctx context.Context, id uuid.UUID, req UpdateReq) (*Brand, error) {
 	if id == uuid.Nil {
 		return nil, ErrInvalidID
 	}
 
-	code, name, err := validateIdentityRequest(req)
+	code, name, err := validateIdentityRequest(req.Code, req.Name)
 	if err != nil {
 		return nil, err
 	}
@@ -140,13 +140,9 @@ func (s *Service) validateCodeUnique(ctx context.Context, code string, excludeID
 	return ErrCodeAlreadyExists
 }
 
-func validateIdentityRequest(req *Brand) (string, string, error) {
-	if req == nil {
-		return "", "", ErrInvalidReq
-	}
-
-	code := strings.TrimSpace(req.Code)
-	name := strings.TrimSpace(req.Name)
+func validateIdentityRequest(rawCode, rawName string) (string, string, error) {
+	code := strings.TrimSpace(rawCode)
+	name := strings.TrimSpace(rawName)
 
 	if code == "" {
 		return "", "", ErrCodeRequired
