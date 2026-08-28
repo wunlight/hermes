@@ -33,47 +33,59 @@ RETURNING
 
 -- name: GetProductByID :one
 SELECT
-    id,
-    sku,
-    name,
-    category_id,
-    brand_id,
-    unit_id,
-    min_stock,
-    weight,
-    length,
-    width,
-    description,
-    status,
-    created_at,
-    updated_at,
-    deleted_at
-FROM products
-WHERE id = $1
-  AND deleted_at IS NULL;
+    p.id,
+    p.sku,
+    p.name,
+    c.id AS category_id,
+    c.name AS category_name,
+    b.id AS brand_id,
+    b.name AS brand_name,
+    u.id AS unit_id,
+    u.name AS unit_name,
+    p.min_stock,
+    p.weight,
+    p.length,
+    p.width,
+    p.description,
+    p.status,
+    p.created_at,
+    p.updated_at,
+    p.deleted_at
+FROM products p
+LEFT JOIN categories c ON c.id = p.category_id
+LEFT JOIN brands b     ON b.id = p.brand_id
+LEFT JOIN units u      ON u.id = p.unit_id
+WHERE p.id = $1
+  AND p.deleted_at IS NULL;
 
 
 
 -- name: GetProductBySKU :one
 SELECT
-    id,
-    sku,
-    name,
-    category_id,
-    brand_id,
-    unit_id,
-    min_stock,
-    weight,
-    length,
-    width,
-    description,
-    status,
-    created_at,
-    updated_at,
-    deleted_at
-FROM products
-WHERE sku = $1
-  AND deleted_at IS NULL;
+    p.id,
+    p.sku,
+    p.name,
+    c.id AS category_id,
+    c.name AS category_name,
+    b.id AS brand_id,
+    b.name AS brand_name,
+    u.id AS unit_id,
+    u.name AS unit_name,
+    p.min_stock,
+    p.weight,
+    p.length,
+    p.width,
+    p.description,
+    p.status,
+    p.created_at,
+    p.updated_at,
+    p.deleted_at
+FROM products p
+LEFT JOIN categories c ON c.id = p.category_id
+LEFT JOIN brands b     ON b.id = p.brand_id
+LEFT JOIN units u      ON u.id = p.unit_id
+WHERE p.sku = $1
+  AND p.deleted_at IS NULL;
 
 
 
@@ -124,23 +136,29 @@ WHERE id = $1
 
 -- name: ListProducts :many
 SELECT
-    id,
-    sku,
-    name,
-    category_id,
-    brand_id,
-    unit_id,
-    min_stock,
-    weight,
-    length,
-    width,
-    description,
-    status,
-    created_at,
-    updated_at,
-    deleted_at
-FROM products
-WHERE deleted_at IS NULL
-ORDER BY name ASC;
+    p.id,
+    p.sku,
+    p.name,
+    c.id AS category_id,
+    c.name AS category_name,
+    b.id AS brand_id,
+    b.name AS brand_name,
+    u.id AS unit_id,
+    u.name AS unit_name,
+    p.min_stock,
+    p.weight,
+    p.length,
+    p.width,
+    p.description,
+    p.status,
+    p.created_at,
+    p.updated_at,
+    p.deleted_at
+FROM products p
+LEFT JOIN categories c ON c.id = p.category_id
+LEFT JOIN brands b     ON b.id = p.brand_id
+LEFT JOIN units u      ON u.id = p.unit_id
+WHERE p.deleted_at IS NULL
+ORDER BY p.name ASC;
 
 

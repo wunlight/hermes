@@ -140,16 +140,19 @@ func toResponse(product *Product) *ProductResponse {
 	}
 
 	return &ProductResponse{
-		ID:          product.ID,
-		SKU:         product.SKU,
-		Name:        product.Name,
-		CategoryID:  product.CategoryID,
-		BrandID:     product.BrandID,
-		UnitID:      product.UnitID,
-		MinStock:    product.MinStock,
-		Weight:      product.Weight,
-		Length:      product.Length,
-		Width:       product.Width,
-		Description: product.Description,
+		ID:           product.ID,
+		SKU:          product.SKU,
+		Name:         product.Name,
+		CategoryID:   product.CategoryID,
+		CategoryName: product.CategoryName,
+		BrandID:      product.BrandID,
+		BrandName:    product.BrandName,
+		UnitID:       product.UnitID,
+		UnitName:     product.UnitName,
+		MinStock:     product.MinStock,
+		Weight:       product.Weight,
+		Length:       product.Length,
+		Width:        product.Width,
+		Description:  product.Description,
 	}
 }

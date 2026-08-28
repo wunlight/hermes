@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 	"strings"
 
 	"github.com/google/uuid"
@@ -20,6 +21,7 @@ func NewService(repository Repository) *Service {
 func (s *Service) List(ctx context.Context) ([]*Product, error) {
 	res, err := s.repository.List(ctx)
 	if err != nil {
+		slog.Error(err.Error())
 		return nil, fmt.Errorf("list product: %w", err)
 	}
 
@@ -76,9 +78,9 @@ func (s *Service) Create(ctx context.Context, req CreateReq) (*Product, error) {
 	newProduct := &Product{
 		SKU:         sku,
 		Name:        name,
-		CategoryID:  categoryID,
-		BrandID:     brandID,
-		UnitID:      unitID,
+		CategoryID:  &categoryID,
+		BrandID:     &brandID,
+		UnitID:      &unitID,
 		MinStock:    req.MinStock,
 		Weight:      req.Weight,
 		Length:      req.Length,
@@ -141,9 +143,9 @@ func (s *Service) Update(ctx context.Context, id uuid.UUID, req UpdateReq) (*Pro
 		ID:          id,
 		SKU:         sku,
 		Name:        name,
-		CategoryID:  categoryID,
-		BrandID:     brandID,
-		UnitID:      unitID,
+		CategoryID:  &categoryID,
+		BrandID:     &brandID,
+		UnitID:      &unitID,
 		MinStock:    req.MinStock,
 		Weight:      req.Weight,
 		Length:      req.Length,

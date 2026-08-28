@@ -107,36 +107,66 @@ func (q *Queries) DeleteProduct(ctx context.Context, id uuid.UUID) error {
 
 const getProductByID = `-- name: GetProductByID :one
 SELECT
-    id,
-    sku,
-    name,
-    category_id,
-    brand_id,
-    unit_id,
-    min_stock,
-    weight,
-    length,
-    width,
-    description,
-    status,
-    created_at,
-    updated_at,
-    deleted_at
-FROM products
-WHERE id = $1
-  AND deleted_at IS NULL
+    p.id,
+    p.sku,
+    p.name,
+    c.id AS category_id,
+    c.name AS category_name,
+    b.id AS brand_id,
+    b.name AS brand_name,
+    u.id AS unit_id,
+    u.name AS unit_name,
+    p.min_stock,
+    p.weight,
+    p.length,
+    p.width,
+    p.description,
+    p.status,
+    p.created_at,
+    p.updated_at,
+    p.deleted_at
+FROM products p
+LEFT JOIN categories c ON c.id = p.category_id
+LEFT JOIN brands b     ON b.id = p.brand_id
+LEFT JOIN units u      ON u.id = p.unit_id
+WHERE p.id = $1
+  AND p.deleted_at IS NULL
 `
 
-func (q *Queries) GetProductByID(ctx context.Context, id uuid.UUID) (Product, error) {
+type GetProductByIDRow struct {
+	ID           uuid.UUID
+	Sku          string
+	Name         string
+	CategoryID   *uuid.UUID
+	CategoryName pgtype.Text
+	BrandID      *uuid.UUID
+	BrandName    pgtype.Text
+	UnitID       *uuid.UUID
+	UnitName     pgtype.Text
+	MinStock     int32
+	Weight       pgtype.Numeric
+	Length       pgtype.Numeric
+	Width        pgtype.Numeric
+	Description  pgtype.Text
+	Status       string
+	CreatedAt    pgtype.Timestamptz
+	UpdatedAt    pgtype.Timestamptz
+	DeletedAt    pgtype.Timestamptz
+}
+
+func (q *Queries) GetProductByID(ctx context.Context, id uuid.UUID) (GetProductByIDRow, error) {
 	row := q.db.QueryRow(ctx, getProductByID, id)
-	var i Product
+	var i GetProductByIDRow
 	err := row.Scan(
 		&i.ID,
 		&i.Sku,
 		&i.Name,
 		&i.CategoryID,
+		&i.CategoryName,
 		&i.BrandID,
+		&i.BrandName,
 		&i.UnitID,
+		&i.UnitName,
 		&i.MinStock,
 		&i.Weight,
 		&i.Length,
@@ -152,36 +182,66 @@ func (q *Queries) GetProductByID(ctx context.Context, id uuid.UUID) (Product, er
 
 const getProductBySKU = `-- name: GetProductBySKU :one
 SELECT
-    id,
-    sku,
-    name,
-    category_id,
-    brand_id,
-    unit_id,
-    min_stock,
-    weight,
-    length,
-    width,
-    description,
-    status,
-    created_at,
-    updated_at,
-    deleted_at
-FROM products
-WHERE sku = $1
-  AND deleted_at IS NULL
+    p.id,
+    p.sku,
+    p.name,
+    c.id AS category_id,
+    c.name AS category_name,
+    b.id AS brand_id,
+    b.name AS brand_name,
+    u.id AS unit_id,
+    u.name AS unit_name,
+    p.min_stock,
+    p.weight,
+    p.length,
+    p.width,
+    p.description,
+    p.status,
+    p.created_at,
+    p.updated_at,
+    p.deleted_at
+FROM products p
+LEFT JOIN categories c ON c.id = p.category_id
+LEFT JOIN brands b     ON b.id = p.brand_id
+LEFT JOIN units u      ON u.id = p.unit_id
+WHERE p.sku = $1
+  AND p.deleted_at IS NULL
 `
 
-func (q *Queries) GetProductBySKU(ctx context.Context, sku string) (Product, error) {
+type GetProductBySKURow struct {
+	ID           uuid.UUID
+	Sku          string
+	Name         string
+	CategoryID   *uuid.UUID
+	CategoryName pgtype.Text
+	BrandID      *uuid.UUID
+	BrandName    pgtype.Text
+	UnitID       *uuid.UUID
+	UnitName     pgtype.Text
+	MinStock     int32
+	Weight       pgtype.Numeric
+	Length       pgtype.Numeric
+	Width        pgtype.Numeric
+	Description  pgtype.Text
+	Status       string
+	CreatedAt    pgtype.Timestamptz
+	UpdatedAt    pgtype.Timestamptz
+	DeletedAt    pgtype.Timestamptz
+}
+
+func (q *Queries) GetProductBySKU(ctx context.Context, sku string) (GetProductBySKURow, error) {
 	row := q.db.QueryRow(ctx, getProductBySKU, sku)
-	var i Product
+	var i GetProductBySKURow
 	err := row.Scan(
 		&i.ID,
 		&i.Sku,
 		&i.Name,
 		&i.CategoryID,
+		&i.CategoryName,
 		&i.BrandID,
+		&i.BrandName,
 		&i.UnitID,
+		&i.UnitName,
 		&i.MinStock,
 		&i.Weight,
 		&i.Length,
@@ -197,42 +257,72 @@ func (q *Queries) GetProductBySKU(ctx context.Context, sku string) (Product, err
 
 const listProducts = `-- name: ListProducts :many
 SELECT
-    id,
-    sku,
-    name,
-    category_id,
-    brand_id,
-    unit_id,
-    min_stock,
-    weight,
-    length,
-    width,
-    description,
-    status,
-    created_at,
-    updated_at,
-    deleted_at
-FROM products
-WHERE deleted_at IS NULL
-ORDER BY name ASC
+    p.id,
+    p.sku,
+    p.name,
+    c.id AS category_id,
+    c.name AS category_name,
+    b.id AS brand_id,
+    b.name AS brand_name,
+    u.id AS unit_id,
+    u.name AS unit_name,
+    p.min_stock,
+    p.weight,
+    p.length,
+    p.width,
+    p.description,
+    p.status,
+    p.created_at,
+    p.updated_at,
+    p.deleted_at
+FROM products p
+LEFT JOIN categories c ON c.id = p.category_id
+LEFT JOIN brands b     ON b.id = p.brand_id
+LEFT JOIN units u      ON u.id = p.unit_id
+WHERE p.deleted_at IS NULL
+ORDER BY p.name ASC
 `
 
-func (q *Queries) ListProducts(ctx context.Context) ([]Product, error) {
+type ListProductsRow struct {
+	ID           uuid.UUID
+	Sku          string
+	Name         string
+	CategoryID   *uuid.UUID
+	CategoryName pgtype.Text
+	BrandID      *uuid.UUID
+	BrandName    pgtype.Text
+	UnitID       *uuid.UUID
+	UnitName     pgtype.Text
+	MinStock     int32
+	Weight       pgtype.Numeric
+	Length       pgtype.Numeric
+	Width        pgtype.Numeric
+	Description  pgtype.Text
+	Status       string
+	CreatedAt    pgtype.Timestamptz
+	UpdatedAt    pgtype.Timestamptz
+	DeletedAt    pgtype.Timestamptz
+}
+
+func (q *Queries) ListProducts(ctx context.Context) ([]ListProductsRow, error) {
 	rows, err := q.db.Query(ctx, listProducts)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Product
+	var items []ListProductsRow
 	for rows.Next() {
-		var i Product
+		var i ListProductsRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.Sku,
 			&i.Name,
 			&i.CategoryID,
+			&i.CategoryName,
 			&i.BrandID,
+			&i.BrandName,
 			&i.UnitID,
+			&i.UnitName,
 			&i.MinStock,
 			&i.Weight,
 			&i.Length,

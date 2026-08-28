@@ -41,14 +41,12 @@ func NumericToMeasurement(value pgtype.Numeric) (float32, error) {
 		return 0, nil
 	}
 
-	var result float64
-
-	err := value.Scan(&result)
+	result, err := value.Float64Value()
 	if err != nil {
 		return 0, err
 	}
 
-	return float32(result), nil
+	return float32(result.Float64), nil
 }
 
 func NullableStringToText(value *string) pgtype.Text {
