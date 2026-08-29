@@ -115,7 +115,7 @@ func (r *sqlcRepository) Update(ctx context.Context, category *Category) (*Categ
 func (r *sqlcRepository) Delete(ctx context.Context, id uuid.UUID) error {
 	queries := sqlc.New(r.db)
 
-	result, err := queries.DeleteBrand(ctx, id)
+	result, err := queries.DeleteCategory(ctx, id)
 	if err != nil {
 		return fmt.Errorf("delete category: %w", err)
 	}

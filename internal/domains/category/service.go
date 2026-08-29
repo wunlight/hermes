@@ -132,7 +132,7 @@ func (s *Service) Delete(ctx context.Context, id uuid.UUID) error {
 		return ErrInvalidID
 	}
 
-	if _, err := s.repository.GetByID(ctx, id); err != nil {
+	if _, err := s.GetByID(ctx, id); err != nil {
 		if errors.Is(err, ErrNotFound) {
 			return ErrNotFound
 		}
