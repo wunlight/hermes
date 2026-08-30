@@ -1,19 +1,43 @@
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { useState } from "react";
-import Form from "../components/form";
+import unitSrv from "../services/services";
+import type { UnitFormModel } from "../types/types";
+import UnitForm from "./unit-form";
 
-export function UnitActions() {
-  return (
-    <div className="flex items-center justify-end gap-3">
-      <EditUnit />
-      <DeleteUnit />
-    </div>
-  );
-}
+type AddUnitProps = {
+  onSuccess: () => void;
+};
 
-export function AddUnit() {
+type UnitActionsProps = {
+  id: string;
+  onSuccess: () => void;
+};
+
+type EditUnitProps = {
+  id: string;
+  onSuccess: () => void;
+};
+
+type DeleteUnitProps = {
+  id: string;
+  onSuccess: () => void;
+};
+
+export function AddUnit({ onSuccess }: AddUnitProps) {
   const [visible, setVisible] = useState(false);
+
+  async function onCreateUnit(req: UnitFormModel) {
+    try {
+      const res = await unitSrv.create(req);
+      console.log(res);
+
+      setVisible(false);
+      onSuccess();
+    } catch (e) {
+      console.error(e);
+    }
+  }
 
   return (
     <>
@@ -27,35 +51,88 @@ export function AddUnit() {
         visible={visible}
         onHide={() => setVisible(false)}
       >
-        <Form />
+        <UnitForm onSubmit={onCreateUnit} />
       </Dialog>
     </>
   );
 }
 
-export function EditUnit() {
+export function UnitActions({ id, onSuccess }: UnitActionsProps) {
+  return (
+    <div className="flex items-center justify-end gap-3">
+      <EditUnit id={id} onSuccess={onSuccess} />
+      <DeleteUnit id={id} onSuccess={onSuccess} />
+    </div>
+  );
+}
+
+export function EditUnit({ id, onSuccess }: EditUnitProps) {
   const [visible, setVisible] = useState(false);
+
+  const [unit, setUnit] = useState<null | UnitFormModel>(null);
+
+  async function onUpdateUnit(req: UnitFormModel) {
+    try {
+      const res = await unitSrv.update(id, req);
+      console.log(res);
+
+      setVisible(false);
+      onSuccess();
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  async function openDialog() {
+    try {
+      const res = await unitSrv.getByID(id);
+
+      setUnit({
+        code: res.code,
+        name: res.name,
+      });
+
+      setVisible(true);
+    } catch (e) {
+      console.error(e);
+
+      setVisible(false);
+    }
+  }
+
   return (
     <>
       <Button
         icon="icon-[mdi--edit]"
         text
         rounded
-        onClick={() => setVisible(true)}
+        onClick={() => openDialog()}
       />
       <Dialog
         header="Edit Unit"
         visible={visible}
         onHide={() => setVisible(false)}
       >
-        <Form />
+        {unit && <UnitForm onSubmit={onUpdateUnit} initialValue={unit} />}
       </Dialog>
     </>
   );
 }
 
-export function DeleteUnit() {
+export function DeleteUnit({ id, onSuccess }: DeleteUnitProps) {
   const [visible, setVisible] = useState(false);
+
+  async function onDeleteUnit() {
+    try {
+      await unitSrv.delete(id);
+
+      setVisible(false);
+      onSuccess();
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   return (
     <>
       <Button
@@ -66,11 +143,11 @@ export function DeleteUnit() {
         onClick={() => setVisible(true)}
       />
       <Dialog
-        key="delete-category"
+        key="delete-unit"
         visible={visible}
         onHide={() => setVisible(false)}
       >
-        <p>Delete Confirmation</p>
+        <Button label="Delete" onClick={() => onDeleteUnit()} />
       </Dialog>
     </>
   );

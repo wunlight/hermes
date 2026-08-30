@@ -2,22 +2,22 @@ import { Button } from "primereact/button";
 import { Divider } from "primereact/divider";
 import { InputText } from "primereact/inputtext";
 import { useState } from "react";
-import type { BrandFormModel } from "../types/types";
+import type { UnitFormModel } from "../types/types";
 
-type BrandFormProps = {
-  onSubmit: (value: BrandFormModel) => void;
-  initialValue?: BrandFormModel;
+type UnitFormProps = {
+  onSubmit: (value: UnitFormModel) => void;
+  initialValue?: UnitFormModel;
 };
 
-export default function BrandForm({ onSubmit, initialValue }: BrandFormProps) {
-  const [form, setForm] = useState<BrandFormModel>(
+export default function UnitForm({ onSubmit, initialValue }: UnitFormProps) {
+  const [form, setForm] = useState<UnitFormModel>(
     initialValue ?? {
       code: "",
       name: "",
     },
   );
 
-  function updateFormField(field: keyof BrandFormModel, value: string) {
+  function updateFormField(field: keyof UnitFormModel, value: string) {
     setForm((prev) => ({
       ...prev,
       [field]: value,
@@ -38,7 +38,7 @@ export default function BrandForm({ onSubmit, initialValue }: BrandFormProps) {
           id="code"
           value={form.code}
           onChange={(e) => updateFormField("code", e.target.value)}
-          placeholder="Enter brand code"
+          placeholder="Enter unit code"
         />
       </div>
       <div className="flex flex-col gap-1">
@@ -47,7 +47,7 @@ export default function BrandForm({ onSubmit, initialValue }: BrandFormProps) {
           id="name"
           value={form.name}
           onChange={(e) => updateFormField("name", e.target.value)}
-          placeholder="Enter brand name"
+          placeholder="Enter unit name"
         />
       </div>
       <Divider className="my-0!" />

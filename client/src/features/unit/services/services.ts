@@ -1,9 +1,36 @@
 import unitApi from "../api/api";
+import type { Unit, UnitFormModel, UnitReq } from "../types/types";
+import { dtoToUnit } from "./mapper";
 
 const unitSrv = {
-  list: async () => {
+  list: async (): Promise<Unit[]> => {
     const { data } = await unitApi.list();
-    return data;
+    return data.map((b) => dtoToUnit(b));
+  },
+  getByID: async (id: string): Promise<Unit> => {
+    const { data } = await unitApi.getByID(id);
+    return dtoToUnit(data);
+  },
+  create: async (form: UnitFormModel): Promise<Unit> => {
+    const req: UnitReq = {
+      code: form.code,
+      name: form.name,
+    };
+
+    const { data } = await unitApi.create(req);
+    return dtoToUnit(data);
+  },
+  update: async (id: string, form: UnitFormModel): Promise<Unit> => {
+    const req: UnitReq = {
+      code: form.code,
+      name: form.name,
+    };
+
+    const { data } = await unitApi.update(id, req);
+    return dtoToUnit(data);
+  },
+  delete: async (id: string) => {
+    await unitApi.delete(id);
   },
 };
 
