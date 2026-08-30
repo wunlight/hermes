@@ -43,6 +43,19 @@ func (s *Service) GetByID(ctx context.Context, id uuid.UUID) (*Category, error) 
 	return result, nil
 }
 
+func (s *Service) GetByCode(ctx context.Context, code string) (*Category, error) {
+	result, err := s.repository.GetByCode(ctx, code)
+	if err != nil {
+		if errors.Is(err, ErrNotFound) {
+			return nil, ErrNotFound
+		}
+
+		return nil, fmt.Errorf("get category by code: %w", err)
+	}
+
+	return result, nil
+}
+
 func (s *Service) Create(ctx context.Context, req CreateReq) (*Category, error) {
 	var parentID *uuid.UUID
 
@@ -99,7 +112,7 @@ func (s *Service) Update(ctx context.Context, id uuid.UUID, req UpdateReq) (*Cat
 		return nil, err
 	}
 
-	_, err = s.repository.GetByID(ctx, id)
+	_, err = s.GetByID(ctx, id)
 	if err != nil {
 		if !errors.Is(err, ErrNotFound) {
 			return nil, fmt.Errorf("check existing category: %w", err)
@@ -153,7 +166,7 @@ func (s *Service) validateParent(ctx context.Context, id *string) (*uuid.UUID, e
 		return nil, ErrInvalidParentID
 	}
 
-	_, err = s.repository.GetByID(ctx, parsedParentID)
+	_, err = s.GetByID(ctx, parsedParentID)
 	if err != nil {
 		if errors.Is(err, ErrNotFound) {
 			return nil, ErrInvalidParentID
@@ -166,7 +179,7 @@ func (s *Service) validateParent(ctx context.Context, id *string) (*uuid.UUID, e
 }
 
 func (s *Service) validateCodeUnique(ctx context.Context, code string, excludeID *uuid.UUID) error {
-	existingCategory, err := s.repository.GetByCode(ctx, code)
+	existingCategory, err := s.GetByCode(ctx, code)
 	if err != nil {
 		if errors.Is(err, ErrNotFound) {
 			return nil

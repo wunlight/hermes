@@ -80,7 +80,7 @@ func (r *sqlcRepository) Create(ctx context.Context, category *Category) (*Categ
 	)
 	if err != nil {
 		if isUniqueViolation(err) {
-			return nil, ErrCodeAlreadyExists
+			return nil, ErrCategoryAlreadyExists
 		}
 
 		return nil, fmt.Errorf("create category: %w", err)
