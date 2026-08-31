@@ -1,4 +1,4 @@
-package brand
+package warehouse
 
 import (
 	"encoding/json"
@@ -18,15 +18,15 @@ func NewHandler(service *Service) *Handler {
 }
 
 func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
-	brands, err := h.service.List(r.Context())
+	warehouses, err := h.service.List(r.Context())
 	if err != nil {
 		h.handleError(w, err)
 		return
 	}
 
-	res := make([]*BrandResponse, 0, len(brands))
-	for _, brand := range brands {
-		res = append(res, toResponse(brand))
+	res := make([]*WarehouseResponse, 0, len(warehouses))
+	for _, warehouse := range warehouses {
+		res = append(res, toResponse(warehouse))
 	}
 
 	writeJSON(w, http.StatusOK, res)
@@ -39,9 +39,9 @@ func (h *Handler) GetByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	brand, err := h.service.GetByID(r.Context(), id)
+	warehouse, err := h.service.GetByID(r.Context(), id)
 
-	writeJSON(w, http.StatusOK, toResponse(brand))
+	writeJSON(w, http.StatusOK, toResponse(warehouse))
 }
 
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
@@ -52,13 +52,13 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	brand, err := h.service.Create(r.Context(), req)
+	warehouse, err := h.service.Create(r.Context(), req)
 	if err != nil {
 		h.handleError(w, err)
 		return
 	}
 
-	writeJSON(w, http.StatusOK, toResponse(brand))
+	writeJSON(w, http.StatusOK, toResponse(warehouse))
 }
 
 func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
@@ -75,13 +75,13 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	brand, err := h.service.Update(r.Context(), id, req)
+	warehouse, err := h.service.Update(r.Context(), id, req)
 	if err != nil {
 		h.handleError(w, err)
 		return
 	}
 
-	writeJSON(w, http.StatusOK, toResponse(brand))
+	writeJSON(w, http.StatusOK, toResponse(warehouse))
 }
 
 func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
@@ -134,16 +134,15 @@ func (h *Handler) handleError(w http.ResponseWriter, err error) {
 	}
 }
 
-func toResponse(brand *Brand) *BrandResponse {
-	if brand == nil {
+func toResponse(warehouse *Warehouse) *WarehouseResponse {
+	if warehouse == nil {
 		return nil
 	}
 
-	return &BrandResponse{
-		ID:        brand.ID,
-		Code:      brand.Code,
-		Name:      brand.Name,
-		CreatedAt: brand.CreatedAt,
-		UpdatedAt: brand.UpdatedAt,
+	return &WarehouseResponse{
+		ID:          warehouse.ID,
+		Code:        warehouse.Code,
+		Name:        warehouse.Name,
+		Description: warehouse.Description,
 	}
 }

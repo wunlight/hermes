@@ -203,8 +203,14 @@ func (r *sqlcRepository) Update(ctx context.Context, product *Product) (*Product
 func (r *sqlcRepository) Delete(ctx context.Context, id uuid.UUID) error {
 	queries := sqlc.New(r.db)
 
-	if err := queries.DeleteProduct(ctx, id); err != nil {
-		return fmt.Errorf("delete product: %w", err)
+	result, err := queries.DeleteProduct(ctx, id)
+	if err != nil {
+		return fmt.Errorf("delete category: %w", err)
+	}
+
+	rowsAffected := result.RowsAffected()
+	if rowsAffected == 0 {
+		return ErrNotFound
 	}
 
 	return nil

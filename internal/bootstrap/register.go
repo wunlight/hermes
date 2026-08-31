@@ -18,11 +18,13 @@ func Register(r chi.Router, db *database.DB) {
 
 	Auth(r, db, tokenManager)
 
-	// Products
+	// Products Related
 	Category(r, db, authMiddleware)
 	Brand(r, db, authMiddleware)
 	Unit(r, db, authMiddleware)
 	Product(r, db, authMiddleware)
+
+	Warehouse(r, db, authMiddleware)
 
 	User(r, db, authMiddleware)
 }

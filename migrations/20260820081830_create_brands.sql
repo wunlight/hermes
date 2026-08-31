@@ -1,5 +1,5 @@
 -- +goose Up
-CREATE TABLE brands (
+CREATE TABLE IF NOT EXISTS brands (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     code TEXT NOT NULL UNIQUE,
     name TEXT NOT NULL,

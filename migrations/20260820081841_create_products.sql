@@ -1,5 +1,5 @@
 -- +goose Up
-CREATE TABLE products (
+CREATE TABLE IF NOT EXISTS products (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     sku TEXT NOT NULL UNIQUE,
     name TEXT NOT NULL,
@@ -53,19 +53,19 @@ CREATE TABLE products (
         CHECK (status IN ('active', 'inactive'))
 );
 
-CREATE INDEX idx_products_category_id
+CREATE INDEX IF NOT EXISTS idx_products_category_id
     ON products(category_id);
 
-CREATE INDEX idx_products_brand_id
+CREATE INDEX IF NOT EXISTS idx_products_brand_id
     ON products(brand_id);
 
-CREATE INDEX idx_products_unit_id
+CREATE INDEX IF NOT EXISTS idx_products_unit_id
     ON products(unit_id);
 
-CREATE INDEX idx_products_status
+CREATE INDEX IF NOT EXISTS idx_products_status
     ON products(status);
 
-CREATE INDEX idx_products_deleted_at
+CREATE INDEX IF NOT EXISTS idx_products_deleted_at
     ON products(deleted_at);
 
 -- +goose Down

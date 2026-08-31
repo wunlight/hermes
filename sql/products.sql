@@ -124,7 +124,7 @@ RETURNING
 
 
 
--- name: DeleteProduct :exec
+-- name: DeleteProduct :execresult
 UPDATE products
 SET
     deleted_at = NOW(),

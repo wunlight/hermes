@@ -1,16 +1,16 @@
 -- +goose Up
-CREATE TABLE IF NOT EXISTS categories (
+CREATE TABLE IF NOT EXISTS warehouses (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    parent_id UUID REFERENCES categories(id) ON DELETE RESTRICT,
     code TEXT NOT NULL UNIQUE,
     name TEXT NOT NULL,
+    description TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     deleted_at TIMESTAMPTZ
 );
 
-CREATE INDEX IF NOT EXISTS idx_categories_parent_id
-    ON categories(parent_id);
+CREATE INDEX IF NOT EXISTS idx_warehouses_code
+    ON warehouses (code);
 
 -- +goose Down
-DROP TABLE IF EXISTS categories;
+DROP TABLE IF EXISTS warehouses;

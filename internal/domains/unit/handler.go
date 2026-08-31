@@ -134,14 +134,14 @@ func (h *Handler) handleError(w http.ResponseWriter, err error) {
 	}
 }
 
-func toResponse(category *Unit) *UnitResponse {
-	if category == nil {
+func toResponse(unit *Unit) *UnitResponse {
+	if unit == nil {
 		return nil
 	}
 
 	return &UnitResponse{
-		ID:   category.ID,
-		Code: category.Code,
-		Name: category.Name,
+		ID:   unit.ID,
+		Code: unit.Code,
+		Name: unit.Name,
 	}
 }
