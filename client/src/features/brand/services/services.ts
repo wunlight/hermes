@@ -1,11 +1,20 @@
 import brandApi from "../api/api";
-import type { Brand, BrandFormModel, BrandReq } from "../types/types";
-import { dtoToBrand } from "./mapper";
+import type {
+  Brand,
+  BrandFormModel,
+  BrandOption,
+  BrandReq,
+} from "../types/types";
+import { dtoToBrand, dtoToBrandOption } from "./mapper";
 
 const brandSrv = {
   list: async (): Promise<Brand[]> => {
     const { data } = await brandApi.list();
     return data.map((b) => dtoToBrand(b));
+  },
+  getOptions: async (): Promise<BrandOption[]> => {
+    const { data } = await brandApi.list();
+    return data.map((b) => dtoToBrandOption(b));
   },
   getByID: async (id: string): Promise<Brand> => {
     const { data } = await brandApi.getByID(id);

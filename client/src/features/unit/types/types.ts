@@ -10,6 +10,11 @@ export type Unit = {
   name: string;
 };
 
+export type UnitOption = {
+  id: string;
+  name: string;
+};
+
 export type UnitReq = {
   code: string;
   name: string;

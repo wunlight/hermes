@@ -1,4 +1,4 @@
-import type { Category, CategoryDTO } from "../types/types";
+import type { Category, CategoryDTO, CategoryOption } from "../types/types";
 
 export function dtoToCategory(dto: CategoryDTO): Category {
   return {
@@ -8,5 +8,12 @@ export function dtoToCategory(dto: CategoryDTO): Category {
     name: dto.name,
     parentId: dto.parent_id,
     updatedAt: dto.updated_at,
+  };
+}
+
+export function dtoToCategoryOption(dto: CategoryDTO): CategoryOption {
+  return {
+    id: dto.id,
+    name: dto.name,
   };
 }

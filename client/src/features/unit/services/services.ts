@@ -1,11 +1,15 @@
 import unitApi from "../api/api";
-import type { Unit, UnitFormModel, UnitReq } from "../types/types";
-import { dtoToUnit } from "./mapper";
+import type { Unit, UnitFormModel, UnitOption, UnitReq } from "../types/types";
+import { dtoToUnit, dtoToUnitOption } from "./mapper";
 
 const unitSrv = {
   list: async (): Promise<Unit[]> => {
     const { data } = await unitApi.list();
     return data.map((b) => dtoToUnit(b));
+  },
+  getOptions: async (): Promise<UnitOption[]> => {
+    const { data } = await unitApi.list();
+    return data.map((b) => dtoToUnitOption(b));
   },
   getByID: async (id: string): Promise<Unit> => {
     const { data } = await unitApi.getByID(id);

@@ -31,7 +31,7 @@ export default function BrandForm({ onSubmit, initialValue }: BrandFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-72">
       <div className="flex flex-col gap-1">
         <label htmlFor="code">Code</label>
         <InputText

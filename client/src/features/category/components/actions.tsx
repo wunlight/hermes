@@ -116,7 +116,7 @@ export function EditCategory({ id, onSuccess }: EditCategoryProps) {
         onHide={() => setVisible(false)}
       >
         {category && (
-          <CategoryForm initialValue={category} onSubmit={onUpdateCategory} />
+          <CategoryForm onSubmit={onUpdateCategory} initialValue={category} />
         )}
       </Dialog>
     </>

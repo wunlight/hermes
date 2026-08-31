@@ -1,11 +1,20 @@
 import categoryApi from "../api/api";
-import type { Category, CategoryFormModel, CategoryReq } from "../types/types";
-import { dtoToCategory } from "./mapper";
+import type {
+  Category,
+  CategoryFormModel,
+  CategoryOption,
+  CategoryReq,
+} from "../types/types";
+import { dtoToCategory, dtoToCategoryOption } from "./mapper";
 
 const categorySrv = {
   list: async (): Promise<Category[]> => {
     const { data } = await categoryApi.list();
     return data.map((c) => dtoToCategory(c));
+  },
+  getOptions: async (): Promise<CategoryOption[]> => {
+    const { data } = await categoryApi.list();
+    return data.map((c) => dtoToCategoryOption(c));
   },
   getByID: async (id: string): Promise<Category> => {
     const { data } = await categoryApi.getByID(id);

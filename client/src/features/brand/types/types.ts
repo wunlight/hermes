@@ -14,6 +14,11 @@ export type Brand = {
   updatedAt: string;
 };
 
+export type BrandOption = {
+  id: string;
+  name: string;
+};
+
 export type BrandReq = {
   code: string;
   name: string;
