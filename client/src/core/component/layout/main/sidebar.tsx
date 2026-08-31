@@ -31,7 +31,7 @@ export default function Sidebar() {
     },
     {
       name: "Master Data",
-      icon: "icon-[mdi--file-report]",
+      icon: "icon-[mdi--cog]",
       children: [
         {
           to: "/category",
@@ -51,6 +51,11 @@ export default function Sidebar() {
         {
           to: "/product",
           name: "Products",
+          icon: "icon-[mdi--category]",
+        },
+        {
+          to: "/warehouse",
+          name: "Warehouses",
           icon: "icon-[mdi--category]",
         },
       ],

@@ -4,6 +4,7 @@ import CategoryList from "@/features/category/views/category-list";
 import DashboardView from "@/features/dashboard/views/dashboard-view";
 import ProductList from "@/features/product/views/product-list";
 import UnitList from "@/features/unit/views/unit-list";
+import WarehouseList from "@/features/warehouse/views/warehouse-list";
 import { Route, Routes } from "react-router";
 import LoginView from "../features/auth/views/login-view";
 import ProtectedRoute from "./protected-route";
@@ -26,6 +27,7 @@ export default function Router() {
           <Route path="/brand" element={<BrandList />} />
           <Route path="/unit" element={<UnitList />} />
           <Route path="/product" element={<ProductList />} />
+          <Route path="/warehouse" element={<WarehouseList />} />
         </Route>
       </Route>
     </Routes>
